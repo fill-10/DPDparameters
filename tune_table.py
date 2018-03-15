@@ -11,11 +11,15 @@ class tune_table(object):
     def gettable(self, ifsaveunselected = False):
         for Row  in self.pfdf.iterrows():
             C_series  = Row[1].dropna()
+            print("sssssssssssssssss")
+
+            print(C_series)
+            print("sssssssssssssssss")
             # iterrows() returns a tuple: (name, series), where name is the index of the row, equivalent to series.name.
             # Use .iloc to choose the wanted data column(s).
             # For each pair, define the object from bdpair_reg
             # It will calculate the average if, plot the regression, and save the xlsx file for the bead pair.
-            bdp_reg = bdpair_reg(C_series.name, C_series.iloc[3:].values, C_series.iloc[3:].index, C_series.iloc[0] ,C_series.iloc[0])
+            bdp_reg = bdpair_reg(C_series.name, C_series.iloc[3:].values, C_series.iloc[3:].index, C_series.iloc[0] ,C_series.iloc[1])
             #
             # Make dataframes (all and below threshold) for the bead pair. The second argument controls the output of the discarded conformations which are above the energy threshold.
             bdp_reg.mk2df(C_series.iloc[2], ifsaveunselected)
@@ -29,7 +33,7 @@ class tune_table(object):
             #
             # Save the parameters
             self.FittingAll = self.FittingAll.append(    pd.DataFrame(    [[bdp_reg.slope, bdp_reg.intercept]] , index =  [bdp_reg.nm] ,columns = self.FittingAll.columns.values   )    )
-            print self.FittingAll
+            print(self.FittingAll)
             
             # The function gettable() is done!
 
@@ -52,12 +56,12 @@ class tune_table(object):
 
 if __name__ == '__main__':
     
-    ft = pd.DataFrame([[-305.113287901, -305.113287901, 100.0, 'OH-OH_550.log','OH-OH_600.log', 'OH-OH_650.log','OH-OH_700.log']] , index = ['OH-OH'], columns = ['Ebd1_Hartree','Ebd2_Hartree','Ethreshold_kcal/mol', 5.5, 6., 6.5, 7.])
+    ft = pd.DataFrame([[-305.113287901, -305.113287901, 120.0, '../OH-OH_550.log','../OH-OH_600.log', '../OH-OH_650.log','../OH-OH_700.log']] , index = ['OH-OH'], columns = ['Ebd1_Hartree','Ebd2_Hartree','Ethreshold_kcal/mol', 5.5, 6., 6.5, 7.])
     
-    print ft
+    #print(ft)
 
     tt = tune_table(ft)
     tt.gettable(True)
-    tt.tunevalues(7.11, 2.0)
-    print tt.FittingAll
+    tt.tunevalues(7.11, 2.856)
+    print( tt.FittingAll )
     tt.writefittingallxlsx('FittingAll.xlsx')

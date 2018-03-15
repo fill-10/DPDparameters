@@ -3,7 +3,17 @@ from Gau_one import Gau_one
 import numpy as np
 import pandas as pd
 
+###----------------------------------------------###
+### use these lines when running on qchem2, etc. ###
+### matplotlib chooses Xwindow backend by default.
+### You need to set matplotlib to not use Xwindos
+### backend.
+###----------------------------------------------###
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+
 import statsmodels.api as sm
 import scipy as sp
 
@@ -40,7 +50,7 @@ class bdpair_reg(object):
 
         self.dframe['rij'] = self.dframe['Distance/A'] / 7.11 # rc = 7.11A
         self.dframe['Xrij'] = 0.5* (1- self.dframe['rij'] )**2
-        self.dframe['Uij'] = self.dframe['deltaE /(kcal/mol)'] / 0.5924
+        self.dframe['Uij'] = self.dframe['deltaE /(kcal/mol)'] / 0.5924  # 0.5924 kcal/mol = 1 dpd energy
         self.dfavg['rij'] = self.dfavg['Distance/A'] / 7.11
         self.dfavg['Xrij'] =  0.5 * (1 - self.dfavg['rij'])**2
         self.dfavg['Uij'] =  self.dfavg['deltaE /(kcal/mol)'] / 0.5924
@@ -66,14 +76,26 @@ class bdpair_reg(object):
         return rslt.params, rslt.rsquared
 
     def sp_regrss_avg(self):
-        slope, intercept, r_value, p_value, std_error= sp.stats.linregress(self.dfavg['Xrij'], self.dfavg['Uij'])
-        return slope, intercept, r_value**2
+        #tmp_X = self.dfavg['Xrij']
+        #tmp_Y = self.dfavg['Uij'].astype(float).values
+        #print(tmp_Y)
+
+        ###-------------------------------------------###
+        ### In the line below, use .astype(float).values
+        ### to convert pandas series into np.array.
+        ### if not, there might be data type errors 
+        ### in some versions of scipy.
+        ###-------------------------------------------###
+        slope, intercept, r_value, p_value, std_error= sp.stats.linregress(self.dfavg['Xrij'].astype(float).values, self.dfavg['Uij'].astype(float).values)
+        # in python3 or above, return a tuple is the safest way.
+        return (slope, intercept, r_value**2)
     
     def plotall(self):
         pass
 
     def plotavg(self):
         self.slope, self.intercept, self.rsquare =  self.sp_regrss_avg()
+        #print( self.slope, self.intercept)
         xx = sp.linspace(   self.dfavg['Xrij'].min() - 0.25 * (self.dfavg['Xrij'].mean() -  self.dfavg['Xrij'].min()), \
                             self.dfavg['Xrij'].max() + 0.25 * (self.dfavg['Xrij'].max() -  self.dfavg['Xrij'].mean()), \
                             50)

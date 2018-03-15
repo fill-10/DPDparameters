@@ -53,6 +53,7 @@ class Gau_one(object):
         self.selecteddf =  self.df.loc[self.df['deltaE /(kcal/mol)'] <= threshold]
         self.avgif =  self.selecteddf['deltaE /(kcal/mol)'].mean()
         #
+        print("energies selected:"+str(len(self.selecteddf))+'\n')
         # Return the selected data(pointer), for convenience. 
         return self.selecteddf
         #

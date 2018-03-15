@@ -15,7 +15,7 @@ ft.gettable()
 
 # If some existing aij_int and bij_int need to be added, use ft.FittingAll.append() here.
 
-ft.tunevalues(7.11, 1.3692)
+ft.tunevalues(7.11, 2.311)
 ft.writefittingallxlsx('FittingaAll_test.xlsx')
 
 #################################
